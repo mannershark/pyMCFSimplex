@@ -1,104 +1,58 @@
 
-*******************************************************************************
-*			          pyMCFSimplex                                *
-*******************************************************************************
-* Version 0.9.1        *
-************************
-* Johannes Sommer, 2013*
-************************
+## pyMCFSimplex
 
-1. What?
---------
 pyMCFSimplex is a Python-Wrapper for the C/C++ MCFSimplex Solver Class from 
 the University of Pisa.
-MCFSimplex is a Class that solves big sized Minimum Cost Flow Problems
+MCFSimplex is a Class that solves large Minimum Cost Flow Problems
 very fast.
 See also [1] for a comparison.
 
-2. How?
--------
-pyMCFSimplex was being made through SWIG. Don't ask for the time I spent on
+pyMCFSimplex was being made through SWIG. Don't ask for the time spent on
 figuring out how SWIG works. With more knowledge in C++ I would have been
 faster - but I'm not a C++ guy! I want it in Python!
 
-3. Who?
--------
 The authors of MCFSimplex are Alessandro Bertolini and Antonio Frangioni from
 the Operations Research Group at the Dipartimento di Informatica of the 
 University of Pisa [2].
 
-pyMCFSimplex is brought to you by Johannes from the G#.Blog 
+pyMCFSimplex was originally created Johannes from the G#.Blog 
 
 	http://www.sommer-forst.de/blog. 
 
-Feel free to contact me: info(at)sommer-forst.de
+It was updated for Python 3 by Arjan van den Boogaart
 
-4. Installation
----------------
-Installation prerequisites are:
-- Python 2.7 or Python 2.6 (only Windows)
-- numpy (tested with 1.6.1)
-- a build environment if you want to install from source distribution
+### Installation
 
-4.1 Windows
------------
-Select the appropriate MSI package for your installed Python version (2.6 or 2.7) an simply execute the installer.
+`pip install pyMCFSimplex`
 
-4.2 Linux
----------
-Untar the binary dist package pyMCFSimplex-0.9.1.linux-x86_64.tar.gz with
+### Usage
 
-tar xfvz pyMCFSimplex-0.9.1.linux-x86_64.tar.gz
-
-It will install into /usr/local/lib/python2.7/dist-packages/.
-
-4.3 Source Distribution
------------------------
-Grab the pyMCFSimplex-0.9.1_src_dist.zip file, extract it and run
-
-a) linux:
-sudo python setup.py install
-
-b) windows:
-start a command line as Administrator and run
-
-python setup.py install
-
-
-5. Usage
---------
 Here is a first start. "sample.dmx" must be in the same location of your python script.
 With these lines of code you can parse a minimum cost flow problem in DIMACS file format and solve it.
 
-from pyMCFSimplex import *
-print "pyMCFSimplex Version '%s' successfully imported." % version()
+```from pyMCFSimplex import *
+
 mcf = MCFSimplex()
-print "MCFSimplex Class successfully instantiated."
-FILENAME = 'sample.dmx'
-print "Loading network from DIMACS file %s.." % FILENAME
-f = open(FILENAME,'r')
+f = open('sample.dmx','r')
 inputStr = f.read()
 f.close()
 mcf.LoadDMX(inputStr)
 
-print "Setting time.."
 mcf.SetMCFTime()
-print "Solving problem.."
 mcf.SolveMCF()
 if mcf.MCFGetStatus() == 0:
-    print "Optimal solution: %s" %mcf.MCFGetFO()
-    print "Time elapsed: %s sec " %(mcf.TimeMCF())
+    print("Optimal solution: %s" %mcf.MCFGetFO())
+    print("Time elapsed: %s sec " %(mcf.TimeMCF()))
 else:
-    print "Problem unfeasible!"
-    print "Time elapsed: %s sec " %(mcf.TimeMCF())
+    print("Problem unfeasible!")
+    print("Time elapsed: %s sec " %(mcf.TimeMCF()))
+```
 
 If you want to load a network not from a DIMACS file, you'll have to call LoadNet() while passing C-arrays to the method.
 C arrays in Python? Yes - don't worry. There are helper methods in pyMCFSimplex, that'll do this for you.
 Look at the following piece of code.
 
-mcf = MCFSimplex()
-print "MCFSimplex Class successfully instantiated."
-print "Reading sample data.."
+```mcf = MCFSimplex()
 
 '''
 Problem data of a MCFP in DIMACS notation
@@ -136,31 +90,30 @@ mcf.LoadNet(nmx, mmx, pn, pm, CreateDoubleArrayFromList(pU), CreateDoubleArrayFr
             CreateDoubleArrayFromList(pDfct), CreateUIntArrayFromList(pSn),
             CreateUIntArrayFromList(pEn))
 
-print "Setting time.."
+print("Setting time..")
 mcf.SetMCFTime()
 mcf.SolveMCF()
 if mcf.MCFGetStatus() == 0:
-    print "Optimal solution: %s" %mcf.MCFGetFO()
-    print "Time elapsed: %s sec " %(mcf.TimeMCF())
+    print("Optimal solution: %s" %mcf.MCFGetFO())
+    print("Time elapsed: %s sec " %(mcf.TimeMCF()))
 else:
-    print "Problem unfeasible!"
-    print "Time elapsed: %s sec " %(mcf.TimeMCF())
+    print("Problem unfeasible!")
+    print("Time elapsed: %s sec " %(mcf.TimeMCF()))
+```
 
 
 Please check out the sample script gsharpblog_mcfsolve_test.py for more information.
 
 
-6. Good to know
----------------
-I changed the original source code of MCFClass.h a little bit for SWIG compatibility.
+### Good to know
+
+The original source code of MCFClass.h was changed a little bit for SWIG compatibility.
 All changes are marked by the following comment line "//Johannes Sommer".
 This included:
 - LoadDMX() accepts in pyMCFSimplex a string value (original: c iostream). The original LoadDMX method is omitted.
 - as SWIG cannot deal with nested classes, I pulled the classes Inf, MCFState and MCFException out of the main class MCFClass.
 
-Perhaps the above mentioned changes to the original source is not necessary, if you know SWIG very well.
-But I could not figure out how to get these things to work in the SWIG interface file.
-Useful hints are very welcome.
+Perhaps the above mentioned changes to the original source are not necessary, if you know SWIG very well.
 
 [1] http://bolyai.cs.elte.hu/egres/tr/egres-13-04.ps
 [2] http://www.di.unipi.it/optimize/Software/MCF.html#MCFSimplex
