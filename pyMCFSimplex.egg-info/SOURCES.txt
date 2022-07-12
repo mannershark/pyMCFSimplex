@@ -24,4 +24,5 @@ setup.py
 pyMCFSimplex.egg-info/PKG-INFO
 pyMCFSimplex.egg-info/SOURCES.txt
 pyMCFSimplex.egg-info/dependency_links.txt
+pyMCFSimplex.egg-info/requires.txt
 pyMCFSimplex.egg-info/top_level.txt
